@@ -6,7 +6,7 @@ import routes from './api/routes';
 const app = express();
 
 app.use(express.json());
-app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/health', (_req, res) => res.json({ ok: true, message: 'hello world!' }));
 app.use('/', routes);
 
 const port = process.env.PORT || 8080;

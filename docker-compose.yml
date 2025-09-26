@@ -1,7 +1,19 @@
-version: '3.9'
 services:
+  app:
+    build: .
+    ports:
+      - "8080:8080" # Exposing your app's port
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    command: ["redis-server", "--save", "","--appendonly","no"]
+    # The redis port does not need to be exposed to the host machine.
+    # The 'app' service can access it directly via its service name 'redis'.
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+
+# The 'db' service and 'postgres_data' volume have been removed
+# since you are using a remote Supabase database.

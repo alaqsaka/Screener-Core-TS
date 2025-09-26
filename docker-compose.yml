@@ -2,18 +2,23 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080" # Exposing your app's port
+      - "8080:8080"
     depends_on:
       - redis
     env_file:
       - .env
     restart: unless-stopped
+    command: npm run dev
+
+  worker:
+    build: .
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    restart: unless-stopped
+    command: npm run worker
 
   redis:
     image: redis:7-alpine
-    # The redis port does not need to be exposed to the host machine.
-    # The 'app' service can access it directly via its service name 'redis'.
     command: ["redis-server", "--save", "", "--appendonly", "no"]
-
-# The 'db' service and 'postgres_data' volume have been removed
-# since you are using a remote Supabase database.

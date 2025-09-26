@@ -1,0 +1,5 @@
+John Doe
+Email: john@example.com
+Skills: Node.js, TypeScript, PostgreSQL
+Experience: 3 years building backend services.
+Project: Inventory API using Node + Postgres.

@@ -1,0 +1,13 @@
+{
+    "technical": {"weight":0.4,"desc":"Tech skill match"},
+    "experience": {"weight":0.25,"desc":"Years & depth"},
+    "achievements": {"weight":0.2,"desc":"Impactful results"},
+    "cultural": {"weight":0.15,"desc":"Values & collaboration"},
+    "project": {
+      "correctness":0.3,
+      "code_quality":0.25,
+      "resilience":0.2,
+      "documentation":0.15,
+      "creativity":0.1
+    }
+  }

@@ -4,3 +4,4 @@ dist
 *.log
 coverage
 documentations
+.DS_Store

@@ -1,0 +1,37 @@
+[
+    {
+        "id": "job_about",
+        "category": "job_description",
+        "text": "Product Engineer (Backend) 2025 at Rakamin. Remote role (Indonesia-based). Build backend product features with frontend engineers and product managers in Agile methodology. Ensure robustness and clean codebase. Write efficient backend code that improves product functionality."
+    },
+    {
+        "id": "job_ai_focus",
+        "category": "job_description",
+        "text": "Role includes working on AI-powered systems. Responsibilities: design and orchestrate LLM integrations, build LLM chaining flows, implement Retrieval-Augmented Generation (RAG) with vector databases, handle long-running AI processes (job orchestration, async workers, retries), design safeguards for uncontrolled scenarios (API failures, nondeterminism), and leverage AI tools for productivity (AI-assisted code generation, automated QA)."
+    },
+    {
+        "id": "job_testing",
+        "category": "job_description",
+        "text": "Strengthen test coverage (RSpec or other testing frameworks). Conduct full product lifecycle from idea to design, implementation, testing, deployment, and maintenance. Collaborate with frontend engineers, 3rd parties, and business stakeholders."
+    },
+    {
+        "id": "job_tech_stack",
+        "category": "job_description",
+        "text": "Required skills: Backend frameworks (Node.js, Django, Rails). Database management (MySQL, PostgreSQL, MongoDB). RESTful APIs. Security compliance. Cloud technologies (AWS, Google Cloud, Azure). Server-side languages (Java, Python, Ruby, JavaScript)."
+    },
+    {
+        "id": "job_additional_skills",
+        "category": "job_description",
+        "text": "Additional skills: Understanding frontend technologies. Authentication and authorization across multiple systems. Scalable application design. Creating database schemas to support business processes. Automated testing platforms and unit tests. Familiarity with LLM APIs, embeddings, vector databases, and prompt design best practices."
+    },
+    {
+        "id": "job_about_you",
+        "category": "job_description",
+        "text": "About you: Strong backend track record, exposure to AI/LLM development or strong willingness to learn. No formal degree required. Work directly with CTO. Culture: Managers of One (self-driven, trusted to deliver)."
+    },
+    {
+        "id": "job_benefits",
+        "category": "job_description",
+        "text": "Benefits & Perks: Remote (Indonesia). Paid time off (17 vacation/personal days). Learning budget Rp29M/year: Rp6M for courses/books, Rp8M O’Reilly subscription, Rp15M access to Rakamin Bootcamps & Short Courses. Device ownership budget Rp7M/year."
+    }
+]

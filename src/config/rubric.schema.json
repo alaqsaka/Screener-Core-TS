@@ -1,0 +1,109 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "CandidateEvaluation",
+    "type": "object",
+    "properties": {
+        "cv_evaluation": {
+            "type": "object",
+            "properties": {
+                "technical_skills": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "experience_level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "achievements": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "cultural_fit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "notes": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "technical_skills",
+                "experience_level",
+                "achievements",
+                "cultural_fit"
+            ]
+        },
+        "project_evaluation": {
+            "type": "object",
+            "properties": {
+                "correctness": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "code_quality": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "resilience": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "documentation": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "creativity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "notes": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "correctness",
+                "code_quality",
+                "resilience",
+                "documentation",
+                "creativity"
+            ]
+        },
+        "final_scores": {
+            "type": "object",
+            "properties": {
+                "cv_match_rate": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                },
+                "project_score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                },
+                "overall_summary": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cv_match_rate",
+                "project_score",
+                "overall_summary"
+            ]
+        }
+    },
+    "required": [
+        "cv_evaluation",
+        "project_evaluation",
+        "final_scores"
+    ]
+}

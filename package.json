@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier -w .",
     "test": "jest",
-    "worker": "ts-node-dev --respawn --transpile-only src/workers/evaluator.worker.ts"
+    "worker": "ts-node-dev --respawn --transpile-only src/workers/evaluator.worker.ts",
+    "index:docs": "ts-node-dev src/scripts/index-documents.ts"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",

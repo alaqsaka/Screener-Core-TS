@@ -1,17 +1,4 @@
 export function cvExtractionPrompt(cvText: string) {
-    console.log('cvExtractionPrompt called with cvText length:', cvText.length);
-
-    console.log('cvExtractionPrompt preview:', [
-        'System: You are an extractor that returns only valid JSON. Do not write anything else.',
-        'User: Extract the following CV into JSON with keys:',
-        '{ "name": string|null, "email": string|null, "skills": string[], "experience_years": number,',
-        '  "projects": [{ "title": string, "description": string, "tech_stack": string[], "role": string|null, "impact": string|null }] }',
-        'Return strictly JSON.',
-        '--- CV START ---',
-        cvText,
-        '--- CV END ---'
-      ].join('\n'));
-
     return [
       'System: You are an extractor that returns only valid JSON. Do not write anything else.',
       'User: Extract the following CV into JSON with keys:',
@@ -24,29 +11,25 @@ export function cvExtractionPrompt(cvText: string) {
     ].join('\n');
 }
   
-export function cvScoringPrompt(jobDesc: string, extractedJson: unknown, rubric: any) {
+export function cvScoringPrompt(extractedJson: unknown, context: string) {
     return [
       'System: Return only JSON with numeric scores 1..5 and short notes.',
       'User: Given the job requirements and the extracted CV JSON, produce:',
       '{ "technical_skills": number, "experience_level": number, "achievements": number, "cultural_fit": number, "notes": string }',
-      'JOB REQUIREMENTS:',
-      jobDesc,
-      'RUBRIC (schema/weights/desc):',
-      JSON.stringify(rubric),
+      'RELEVANT JOB REQUIREMENTS (use this context to score the candidate):',
+      context,
       'EXTRACTED_CV_JSON:',
       JSON.stringify(extractedJson)
     ].join('\n');
 }
   
-export function projectEvalPrompt(jobDesc: string, projectText: string, rubric: any) {
+export function projectEvalPrompt(projectText: string, context: string) {
     return [
       'System: Return only JSON with numeric scores 1..5 and short notes.',
       'User: Evaluate the project report and produce:',
       '{ "correctness": number, "code_quality": number, "resilience": number, "documentation": number, "creativity": number, "notes": string }',
-      'JOB REQUIREMENTS:',
-      jobDesc,
-      'RUBRIC (schema/weights/desc):',
-      JSON.stringify(rubric),
+      'RELEVANT JOB REQUIREMENTS (use this context to evaluate the project):',
+      context,
       '--- PROJECT START ---',
       projectText,
       '--- PROJECT END ---'

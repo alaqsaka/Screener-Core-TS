@@ -1,73 +1,46 @@
-# Asynchronous Job Evaluation API
-This backend evaluates a candidate’s CV and project report asynchronously. It queues a job, runs an LLM-driven pipeline in a worker, and exposes a result endpoint.
+# AI-Powered CV & Project Evaluation Service
+
+This project is a backend service that uses AI to automatically evaluate candidate CVs and project reports against a given job description. It's built to be robust and scalable, using a background job queue to handle the intensive AI processing without blocking the API.
 
 ## Core Features
-- Asynchronous job processing (BullMQ + Redis).
-- File upload + text extraction (pdf-parse, mammoth).
-- LLM chaining (Gemini via @google/genai): extract → score CV → evaluate project → refine.
-- Aggregation with rubric weights (cv_match_rate 0–100, project_score 0–10).
-- Validation (Ajv) and retries/backoff with jitter.
 
-## End-to-End Process Flow
-1. Upload Files: POST /upload with cv and/or project_report.
-2. Task Creation: server stores files, extracts text, creates task, returns taskId.
-3. Start Evaluation: client calls POST /evaluate with only taskId. The worker loads Job Description and Rubric from src/config.
-4. Queueing: API enqueues the job and returns jobId.
-5. Worker Processing: extracts → scores CV → evaluates project → refines summary, computes aggregates, persists results.
-6. Result Retrieval: GET /result/:taskId returns status or final result.
+-   **Asynchronous by Design:** File uploads are processed by a background worker using a BullMQ job queue with Redis. This means the API stays fast and responsive, even under heavy load.
+-   **Intelligent AI Evaluation (RAG):** Instead of just asking an LLM a generic question, the service uses a Retrieval-Augmented Generation (RAG) pipeline. It finds the most relevant parts of the job description and uses that specific context to guide the AI's evaluation, leading to much higher quality and more consistent results.
+-   **Robust Error Handling:** The system is built to be resilient.
+    -   It automatically retries failed Gemini API calls with an exponential backoff strategy.
+    -   It validates inputs, gracefully handling empty files, incorrect file types, and malformed API requests.
+    -   The core resilience logic is verified with an automated unit test suite.
+-   **Containerized & Easy to Run:** The entire application stack (API, worker, database, Redis) is containerized with Docker, so you can get it up and running with a single command.
+
+## Architecture
+
+The application is broken down into four main services that run in separate Docker containers:
+
+1.  **API Server (`api`):** A Node.js/Express server that exposes the REST API for uploading files and checking job statuses.
+2.  **Background Worker (`worker`):** A separate Node.js process that listens for jobs from the queue and performs the actual AI evaluation and scoring.
+3.  **Database (`db`):** A PostgreSQL database with the `pgvector` extension to store task data and the vector embeddings for the RAG pipeline.
+4.  **Job Queue (`redis`):** A Redis instance that backs the BullMQ job queue, managing communication between the API server and the worker.
 
 ## API Endpoints
-### Health
-GET /health
-- 200: { "ok": true, "message": "hello world!" }
 
-### 1) Upload Documents
-POST /upload (multipart/form-data)
-- Fields: cv, project_report (pdf/docx/txt)
-- 201 example:
-{
-  "id": "task-uuid",
-  "status": "uploaded",
-  "files": [{ "role": "cv", "filename": "...", "mimetype": "application/pdf" }]
-}
+-   `POST /upload`
+    -   Uploads a candidate's documents.
+    -   **Form Fields:** `cv` (file), `project_report` (file)
+    -   **Returns:** A task ID and `uploaded` status.
 
-### 2) Start Evaluation
-POST /evaluate (application/json)
-- Body:
-{
-  "taskId": "REPLACE_WITH_TASK_ID"
-}
-- 200:
-{ "id": "bullmq-job-id", "status": "queued" }
+-   `POST /evaluate`
+    -   Triggers the AI evaluation for a previously uploaded set of documents.
+    -   **Body:** `{ "taskId": "task-id-from-upload-endpoint" }`
+    -   **Returns:** A confirmation that the job has been `queued`.
 
-### 3) Get Evaluation Result
-GET /result/:taskId
-- Pending:
-{ "id": "task-uuid", "status": "queued" }
-- Completed:
-{
-  "id": "task-uuid",
-  "status": "completed",
-  "result": {
-    "cv_match_rate": 85.5,
-    "cv_feedback": "...",
-    "project_score": 9.2,
-    "project_feedback": "...",
-    "overall_summary": "..."
-  }
-}
+-   `GET /result/:id`
+    -   Checks the status and result of an evaluation job.
+    -   **Returns:** The current job status (`processing`, `completed`, `failed`) and, upon completion, the full evaluation report.
 
-## Configuration
-- Job Description: src/config/job_description.json
-- Rubric schema (requested output fields): src/config/rubric.schema.json
-- Rubric weights for aggregation: rubric.json
+## Testing
 
-## Running Locally (macOS)
-- Start infra (Postgres, Redis) as per your local setup.
-- Install deps: npm install
-- Run API: npm run dev
-- Run worker (separate terminal): npm run worker
+The project includes a suite of unit tests for its core error-handling and utility functions. To run the tests:
 
-## Status and Next Steps
-- Implemented: upload, queue, worker pipeline, LLM prompts + orchestration, Ajv validation, backoff, scoring, local JD/rubric config.
-- Pending: Vector DB & RAG (retrieve top-K contexts), job progress updates, tests (unit/integration), CI workflow, README polishing for deployment.
+```bash
+npm test
+```

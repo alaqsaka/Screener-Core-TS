@@ -1,7 +1,7 @@
 import { generateText } from './genai.client';
 import { cvExtractionPrompt, cvScoringPrompt, projectEvalPrompt, refinePrompt } from './prompts';
 
-function safeJson<T = any>(s: string): T {
+export function safeJson<T = any>(s: string): T {
     try {
         return JSON.parse(s) as T;
     } catch {

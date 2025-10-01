@@ -7,5 +7,14 @@ module.exports = {
     parserOptions: { sourceType: 'module' },
     rules: {
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
-    }
+    },
+    overrides: [
+      {
+        files: ['public/js/**/*.js'],
+        env: { browser: true, es2021: true },
+        rules: {
+          '@typescript-eslint/no-unused-vars': 'off',
+        },
+      },
+    ],
   };

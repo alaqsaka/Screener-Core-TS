@@ -24,16 +24,17 @@ export function cvScoringPrompt(extractedJson: unknown, context: string) {
 }
   
 export function projectEvalPrompt(projectText: string, context: string) {
-    return [
-      'System: Return only JSON with numeric scores 1..5 and short notes.',
-      'User: Evaluate the project report and produce:',
-      '{ "correctness": number, "code_quality": number, "resilience": number, "documentation": number, "creativity": number, "notes": string }',
-      'RELEVANT JOB REQUIREMENTS (use this context to evaluate the project):',
-      context,
-      '--- PROJECT START ---',
-      projectText,
-      '--- PROJECT END ---'
-    ].join('\n');
+  return [
+    'System: Return ONLY raw JSON. Do not include explanations, text, or extra nesting.',
+    'User: Evaluate the project report and respond exactly in this JSON shape (no outer keys, no arrays):',
+    '{ "correctness": number, "code_quality": number, "resilience": number, "documentation": number, "creativity": number, "notes": string }',
+    '',
+    'RELEVANT JOB REQUIREMENTS (use this context to evaluate the project):',
+    context,
+    '--- PROJECT START ---',
+    projectText,
+    '--- PROJECT END ---'
+  ].join('\n');
 }
   
 export function refinePrompt(cvScore: unknown, projectScore: unknown) {

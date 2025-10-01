@@ -60,7 +60,7 @@ async function processJob(job: Job) {
       throw new Error('Invalid Project evaluation JSON from LLM');
     }
 
-    // --- Scoring and Summary (no changes needed here) ---
+    // --- Scoring and Summary ---
     const cv_match_rate = cvEval ? computeCvMatchRate(cvEval) : 0;
     console.log(`[WORKER] Computed CV Match Rate: ${cv_match_rate}`);
 
@@ -97,7 +97,7 @@ async function processJob(job: Job) {
     await pool.query(`update tasks set status='completed', updated_at=now() where id=$1`, [taskId]);
     console.log('[worker] Completed task', taskId);
     return true;
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[worker] Failed task', taskId, err);
     await pool.query(`update tasks set status='failed', updated_at=now() where id=$1`, [taskId]);
     throw err;

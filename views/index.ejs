@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+<section>
+    <h2>Upload Documents</h2>
+    <form id="upload-form">
+        <label for="cv">CV/Resume (PDF, DOCX)</label>
+        <input type="file" id="cv" name="cv">
+
+        <label for="project_report">Project Report (PDF, DOCX, TXT)</label>
+        <input type="file" id="project_report" name="project_report">
+
+
+        <button type="submit" id="submit-btn">Upload and Analyze</button>
+        <div id="upload-error" class="error" style="display: none;"></div>
+    </form>
+</section>
+
+<section>
+    <h2>Job Description</h2>
+    <p>Upload a CV and/or a Project Report to evaluate them against the following job description.</p>
+    <% jobDescription.forEach(item => { %>
+        <article>
+            <header><strong><%= item.id.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %></strong></header>
+            <p><%= item.text %></p>
+        </article>
+    <% }); %>
+</section>
+
+<script>
+    document.getElementById('upload-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const submitBtn = document.getElementById('submit-btn');
+        const errorDiv = document.getElementById('upload-error');
+
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+        errorDiv.style.display = 'none';
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || `Upload failed with status ${response.status}`);
+            }
+
+            window.location.href = `/${result.id}`;
+
+        } catch (error) {
+            console.error('Upload failed:', error);
+            errorDiv.textContent = error.message;
+            errorDiv.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.removeAttribute('aria-busy');
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

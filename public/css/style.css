@@ -1,0 +1,22 @@
+#status-badge {
+    padding: 0.25em 0.5em;
+    border-radius: var(--pico-border-radius);
+}
+
+.error {
+    color: var(--pico-color-critical-400);
+    background-color: var(--pico-color-critical-200);
+    border: 1px solid var(--pico-color-critical-300);
+    padding: 1rem;
+    border-radius: var(--pico-border-radius);
+    margin-bottom: 1rem;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: var(--pico-card-background-color);
+    padding: 1rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-card-border-color);
+}

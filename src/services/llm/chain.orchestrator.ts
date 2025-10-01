@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { generateText } from './genai.client';
 import { cvExtractionPrompt, cvScoringPrompt, projectEvalPrompt, refinePrompt } from './prompts';
 

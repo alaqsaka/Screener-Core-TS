@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<div id="result-page" data-task-id="<%= taskId %>" data-initial-status="<%= task.status %>">
+    <header>
+        <h2>Evaluation Result</h2>
+        <p><strong>Task ID:</strong> <%= taskId %></p>
+        <p><strong>Status:</strong> <mark id="status-badge"><%= task.status %></mark></p>
+    </header>
+
+    <div id="controls">
+        <button id="evaluate-btn" style="display: none; margin-bottom: 10px;">Evaluate</button>
+    </div>
+    <div id="error-message" class="error" style="display: none;"></div>
+
+    <div id="result-container" style="display: none; margin-top: 10px;">
+        <h3>Final Report</h3>
+        <div class="grid">
+            <article>
+                <header>CV Match Rate</header>
+                <h2 id="cv-match-rate"></h2>
+                <p id="cv-feedback"></p>
+            </article>
+            <article>
+                <header>Project Score</header>
+                <h2 id="project-score"></h2>
+                <p id="project-feedback"></p>
+            </article>
+        </div>
+        <article>
+            <header>Overall Summary</header>
+            <p id="overall-summary"></p>
+        </article>
+    </div>
+
+    <hr>
+
+    <% files.forEach(file => { %>
+        <details>
+            <summary><strong>Extracted Text: <%= file.original_filename %></strong> (<%= file.role %>)</summary>
+            <pre><code><%= file.extracted_text || 'No text extracted.' %></code></pre>
+        </details>
+    <% }); %>
+
+    <div id="raw-output-container" style="display: none;">
+        <details>
+            <summary><strong>Raw LLM & RAG Output</strong></summary>
+            <pre><code id="raw-output"></code></pre>
+        </details>
+    </div>
+</div>
+
+<script src="/js/result.js"></script>
+<%- include('partials/footer') %>

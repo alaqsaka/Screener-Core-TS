@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import { extractTextFromFile } from '../../services/extraction.service';
 import { uploadBuffer } from '../../services/storage.service';
 import { pool } from '../../db/pool';
@@ -7,7 +7,7 @@ const BUCKET = process.env.SUPABASE_STORAGE_BUCKET!;
 
 const ALLOWED_MIME = new Set<string>([
   'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'text/plain'
 ]);
 
@@ -20,16 +20,20 @@ function ensureAllowedFile(file?: Express.Multer.File) {
   }
 }
 
-export async function uploadHandler(req: Request, res: Response) {
+export const uploadHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const cvFile = (req.files as any)?.cv?.[0] as Express.Multer.File | undefined;
-    const projectFile = (req.files as any)?.project_report?.[0] as Express.Multer.File | undefined;
+    const files = req.files as {
+      cv?: Express.Multer.File[];
+      project_report?: Express.Multer.File[];
+    } | undefined;
+
+    const cvFile = files?.cv?.[0];
+    const projectFile = files?.project_report?.[0];
 
     if (!cvFile && !projectFile) {
       return res.status(400).json({ error: 'cv or project_report file required' });
     }
 
-    // Validate that uploaded files are not empty
     if (cvFile && cvFile.size === 0) {
       return res.status(400).json({ error: 'CV file cannot be empty.' });
     }
@@ -37,12 +41,11 @@ export async function uploadHandler(req: Request, res: Response) {
       return res.status(400).json({ error: 'Project report file cannot be empty.' });
     }
 
-    // Validate MIME types before any DB/storage work
     try {
       ensureAllowedFile(cvFile);
       ensureAllowedFile(projectFile);
-    } catch (e: any) {
-      return res.status(400).json({ error: e.message });
+    } catch (e: unknown) {
+      return res.status(400).json({ error: e instanceof Error ? e.message : 'invalid_file' });
     }
 
     const client = await pool.connect();
@@ -62,7 +65,6 @@ export async function uploadHandler(req: Request, res: Response) {
           f.mimetype
         );
         const extracted = await extractTextFromFile(f);
-        console.log('Extracted text length:', extracted.length);
         await client.query(
           `insert into files (task_id, role, original_filename, mimetype, storage_path, extracted_text)
            values ($1,$2,$3,$4,$5,$6)`,
@@ -78,7 +80,7 @@ export async function uploadHandler(req: Request, res: Response) {
       }
 
       await client.query('commit');
-      res.status(201).json({
+      return res.status(201).json({
         id: taskId,
         status: 'uploaded',
         files: [cvFile, projectFile].filter(Boolean).map(f => ({
@@ -93,8 +95,8 @@ export async function uploadHandler(req: Request, res: Response) {
     } finally {
       client.release();
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error in uploadHandler:', e);
-    res.status(500).json({ error: 'internal_error' });
+    return res.status(500).json({ error: 'internal_error' });
   }
-}
+};

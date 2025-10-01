@@ -16,11 +16,17 @@ const uploadCore = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: (Number(process.env.FILE_MAX_MB) || 5) * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (ALLOWED_MIME.has(file.mimetype)) return cb(null, true);
-    const err: any = new Error(
+    if (ALLOWED_MIME.has(file.mimetype)) {
+      return cb(null, true);
+    }
+    
+    const err = new Error(
       `Unsupported file type: ${file.mimetype}. Allowed: pdf (.pdf), docx (.docx), txt (.txt)`
-    );
+    ) as Error & { code: string; field: string; mimetype: string };
+
     err.code = 'UNSUPPORTED_FILE_TYPE';
+    err.field = file.fieldname;
+    err.mimetype = file.mimetype;
     return cb(err);
   }
 }).fields([
@@ -29,15 +35,20 @@ const uploadCore = multer({
 ]);
 
 const uploadWithJsonErrors: RequestHandler = (req, res, next) => {
-  uploadCore(req, res, (err: any) => {
+  uploadCore(req, res, (err) => {
     if (err) {
-      const status = err.code === 'UNSUPPORTED_FILE_TYPE' ? 415 : 400;
-      return res.status(status).json({
-        error: 'unsupported_media_type',
-        message: 'Only document files are allowed.',
-        detail: err.message,
-        allowed: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'],
-        received: err.field ? { field: err.field, mimetype: err.mimetype } : undefined
+      if (err.code === 'UNSUPPORTED_FILE_TYPE') {
+        return res.status(415).json({
+          error: 'unsupported_media_type',
+          message: 'Only document files are allowed.',
+          detail: err.message,
+          allowed: [...ALLOWED_MIME],
+          received: err.field ? { field: err.field, mimetype: err.mimetype } : undefined
+        });
+      }
+      return res.status(400).json({
+        error: 'upload_error',
+        message: err.message
       });
     }
     next();

@@ -7,7 +7,7 @@ import { createEmbedding } from './llm/genai.client';
  * @param limit The maximum number of chunks to return.
  * @returns An array of document chunk objects, including their content and similarity score.
  */
-export async function searchRelevantChunks(queryText: string, limit: number = 5): Promise<{ content: string, similarity: number }[]> {
+export async function searchRelevantChunks(queryText: string, limit: number = 5, documentType: string): Promise<{ content: string, similarity: number }[]> {
   console.log(`[VectorService] Searching for chunks relevant to: "${queryText}"`);
 
   // 1. Create an embedding for the query text, specifying the query task type.
@@ -18,9 +18,10 @@ export async function searchRelevantChunks(queryText: string, limit: number = 5)
   const searchResult = await pool.query(
     `SELECT content, 1 - (embedding <=> $1) as similarity
      FROM document_chunks
+     WHERE document_type = $3
      ORDER BY similarity DESC
      LIMIT $2`,
-    [`[${queryEmbedding.join(',')}]`, limit]
+    [`[${queryEmbedding.join(',')}]`, limit, documentType]
   );
 
   console.log(`[VectorService] Found ${searchResult.rowCount} relevant chunks.`);

@@ -13,8 +13,8 @@ export function cvExtractionPrompt(cvText: string) {
   
 export function cvScoringPrompt(extractedJson: unknown, context: string) {
     return [
-      'System: Return only JSON with numeric scores 1..5 and short notes.',
-      'User: Given the job requirements and the extracted CV JSON, produce:',
+      'System: Return only JSON with numeric scores 1..5 and short notes. Do not include explanations, text, or extra nesting.',
+      'User: Given the job requirements, the extracted CV JSON and respond exactly in this JSON shape (no outer keys, no arrays), produce:',
       '{ "technical_skills": number, "experience_level": number, "achievements": number, "cultural_fit": number, "notes": string }',
       'RELEVANT JOB REQUIREMENTS (use this context to score the candidate):',
       context,

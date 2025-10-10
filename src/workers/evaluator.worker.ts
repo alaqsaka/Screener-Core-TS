@@ -27,13 +27,13 @@ async function processJob(job: Job) {
 
     // --- RAG Implementation Step 1: Get Context for CV ---
     console.log('[WORKER_RAG] Searching for context relevant to the CV...');
-    const cvContextChunks = await searchRelevantChunks(cvText, 7);
+    const cvContextChunks = await searchRelevantChunks(cvText, 7, 'job_briefing');
     const cvContext = cvContextChunks.map(c => c.content).join('\n\n---\n\n');
     console.log(`[WORKER_RAG] Found CV context, length: ${cvContext.length}`);
 
     // --- RAG Implementation Step 2: Get Context for Project ---
     console.log('[WORKER_RAG] Searching for context relevant to the Project...');
-    const projectContextChunks = await searchRelevantChunks(projectText, 7);
+    const projectContextChunks = await searchRelevantChunks(projectText, 7, 'case_study_brief');
     const projectContext = projectContextChunks.map(c => c.content).join('\n\n---\n\n');
     console.log(`[WORKER_RAG] Found Project context, length: ${projectContext.length}`);
 

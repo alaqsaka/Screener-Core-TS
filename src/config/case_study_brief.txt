@@ -101,7 +101,7 @@ Each parameter can be scored 1-5, then aggregated to final score.
 Requirements
 Use any backend framework (Rails, Django, Node.js, etc.).
 •
-Use an LLM (OpenAl or Gemini or OpenRouter). If unavailable, mock the responses.
+Use an LLM (OpenAI or Gemini or OpenRouter). If unavailable, mock the responses.
 •
 Use a simple vector DB.
 •
